@@ -76,6 +76,6 @@ const merge = (left, right) => {
     .concat(right.slice(rightIndex));
 };
 
-console.log(mergeSort(arr));
+// console.log(mergeSort(arr));
 
 //quick sort

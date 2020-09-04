@@ -1,19 +1,19 @@
 // //rules are
 // //1. when closing opening bracket should be last on the stack
 const checkBrackets = (bracketString) => {
-  const bracketOptions = {
+  let brackets = {
     "{": "}",
     "[": "]",
     "(": ")",
   };
-  var stack = [];
-  var bracketKeys = Object.keys(bracketOptions);
-  for (var letter of bracketString) {
-    if (bracketKeys.includes(letter)) {
-      stack.push(letter);
+  let stack = [];
+  let openings = Object.keys(brackets);
+  for (const bracket of bracketString) {
+    if (openings.includes(bracket)) {
+      stack.push(bracket);
     } else {
-      var bracketCheck = stack.pop();
-      if (letter !== bracketOptions[bracketCheck]) {
+      let compare = stack.pop();
+      if (bracket !== brackets[compare]) {
         return false;
       }
     }
@@ -21,23 +21,23 @@ const checkBrackets = (bracketString) => {
   return stack.length === 0;
 };
 
-// const testsTrue = ["()", "{}", "[]", "(){}[]", "((){}[])", "([{}])"];
-// const testsFalse = [")", "{", "][", "{)", ")("];
-// const tester = () => {
-//   for (const test of testsTrue) {
-//     if (!checkBrackets(test)) {
-//       return false;
-//     }
-//   }
-//   for (const test of testsFalse) {
-//     if (checkBrackets(test)) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };
+const testsTrue = ["()", "{}", "[]", "(){}[]", "((){}[])", "([{}])"];
+const testsFalse = [")", "{", "][", "{)", ")("];
+const tester = () => {
+  for (const test of testsTrue) {
+    if (!checkBrackets(test)) {
+      return false;
+    }
+  }
+  for (const test of testsFalse) {
+    if (checkBrackets(test)) {
+      return false;
+    }
+  }
+  return true;
+};
 
-// console.log(tester());
+console.log(tester());
 // function amountOfEdits(finalWord, editWord) {
 //   if (editWord.length === finalWord.length) {
 //     return checkReplacement(finalWord, editWord);
@@ -590,4 +590,61 @@ function tripleThreat(a) {
   return 0;
 }
 
-tripleThreat([3, 1, 2, 3]);
+// tripleThreat([3, 1, 2, 3]);
+
+function is_valid(stale, latest, otjson) {
+  // this is the part you will write!
+  const operations = JSON.parse(otjson);
+  let newStr = "";
+  let currIndex = 0;
+  // 3 operations, delete, skip, and insert
+  for (const op of operations) {
+    if (op.op === "skip") {
+      currIndex = currIndex + op.count;
+    } else if (op.op === "delete") {
+      let arr = stale.split("");
+      let removed = arr.splice(currIndex, op.count);
+      stale = arr.join("");
+    } else if (op.op === "insert") {
+      stale = stale.slice(0, currIndex) + op.chars + stale.slice(currIndex);
+
+      currIndex = currIndex + op.chars.length;
+    }
+  }
+  if (stale === latest) {
+    console.log(true);
+    return true;
+  } else {
+    console.log(false);
+    return false;
+  }
+}
+
+// is_valid(
+//   "Repl.it uses operational transformations to keep everyone in a multiplayer repl in sync.",
+//   "Repl.it uses operational transformations.",
+//   '[{"op": "skip", "count": 40}, {"op": "delete", "count": 47}]'
+// ); // true
+
+// is_valid(
+//   "Repl.it uses operational transformations to keep everyone in a multiplayer repl in sync.",
+//   "Repl.it uses operational transformations.",
+//   '[{"op": "skip", "count": 45}, {"op": "delete", "count": 47}]'
+// ); // false, delete past end
+
+// is_valid(
+//   "Repl.it uses operational transformations to keep everyone in a multiplayer repl in sync.",
+//   "Repl.it uses operational transformations.",
+//   '[{"op": "skip", "count": 45}, {"op": "delete", "count": 47}, {"op": "skip", "count": 2}]'
+// ), // false, skip past end
+//   is_valid(
+//     "Repl.it uses operational transformations to keep everyone in a multiplayer repl in sync.",
+//     "We use operational transformations to keep everyone in a multiplayer repl in sync.",
+//     '[{"op": "delete", "count": 7}, {"op": "insert", "chars": "We"}, {"op": "skip", "count": 4}, {"op": "delete", "count": 1}]'
+//   ); // true
+
+// is_valid(
+//   "Repl.it uses operational transformations to keep everyone in a multiplayer repl in sync.",
+//   "Repl.it uses operational transformations to keep everyone in a multiplayer repl in sync.",
+//   "[]"
+// ); //true
